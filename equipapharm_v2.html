@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Equipapharm — Matériel médical à domicile</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f0;color:#1a1a1a;-webkit-tap-highlight-color:transparent;}
+.app{min-height:100vh;}
+.hdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#fff;border-bottom:1px solid #e5e5e0;position:sticky;top:0;z-index:50;}
+.logo{width:34px;height:34px;border-radius:8px;background:#1D9E75;position:relative;flex-shrink:0;}
+.logo::before,.logo::after{content:'';position:absolute;background:#fff;border-radius:2px;}
+.logo::before{width:16px;height:5px;top:14px;left:9px;}
+.logo::after{width:5px;height:16px;top:9px;left:14px;}
+.hdr-t{font-size:15px;font-weight:600;color:#1a1a1a;}
+.hdr-s{font-size:12px;color:#888;}
+.hdr-r{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{padding:7px 14px;border:1px solid #d0d0c8;border-radius:8px;background:#fff;color:#666;font-size:13px;cursor:pointer;}
+.btn:active{background:#f0f0ec;}
+.btn-g{border-color:#1D9E75;color:#0F6E56;}
+.btn-g:active{background:#E1F5EE;}
+.btn-p{background:#1D9E75;color:#fff;border-color:#1D9E75;font-weight:500;}
+.btn-p:active{background:#0F6E56;}
+.view{padding:16px 20px;display:none;}
+.view.on{display:block;}
+.hint{font-size:14px;color:#888;margin-bottom:14px;text-align:center;}
+.plan-wrap{max-width:600px;margin:0 auto;}
+.plan-svg{width:100%;height:auto;display:block;}
+.rz{cursor:pointer;}
+.rz rect{fill:transparent;stroke:#1D9E75;stroke-width:2;}
+.rz:active rect{fill:rgba(29,158,117,.15);}
+.ri{font-size:22px;text-anchor:middle;pointer-events:none;}
+.rl{font-size:12px;font-weight:600;fill:#555;text-anchor:middle;pointer-events:none;}
+.rtitle{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:4px;}
+.rdesc{font-size:14px;color:#888;margin-bottom:18px;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.pc{background:#fff;border:1px solid #e5e5e0;border-radius:14px;padding:16px;cursor:pointer;}
+.pc:active{border-color:#1D9E75;background:#f9fdfb;}
+.pico{font-size:28px;margin-bottom:10px;}
+.pname{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:4px;line-height:1.3;}
+.pref{font-size:11px;color:#bbb;margin-bottom:6px;}
+.tag{display:inline-block;font-size:11px;background:#E1F5EE;color:#085041;padding:3px 9px;border-radius:99px;font-weight:500;}
+.tagr{background:#d4edda;color:#155724;}
+.pbadge{font-size:14px;font-weight:600;color:#0F6E56;margin-top:6px;}
+.dh{display:flex;gap:14px;margin-bottom:18px;align-items:flex-start;}
+.dico{width:56px;height:56px;border-radius:14px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.dname{font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:3px;}
+.dref{font-size:12px;color:#bbb;margin-bottom:6px;}
+.dbadges{display:flex;flex-wrap:wrap;gap:6px;}
+.sec{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:18px 0 8px;}
+.iblk{background:#f5f5f0;border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.iblk p{font-size:14px;color:#333;line-height:1.6;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px;}
+.chip{font-size:13px;background:#f5f5f0;color:#555;border:1px solid #e5e5e0;border-radius:99px;padding:5px 12px;}
+.flist{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.flist li{font-size:14px;color:#333;display:flex;gap:10px;line-height:1.4;}
+.flist li::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:#1D9E75;margin-top:5px;flex-shrink:0;}
+.pbox{border-radius:10px;padding:12px;margin-bottom:16px;display:grid;gap:10px;}
+.pbox.duo{grid-template-columns:1fr 1fr;}
+.pbox.solo{grid-template-columns:1fr;}
+.pbox-cell{border-radius:9px;padding:10px 14px;}
+.pbox-cell.green{background:#E1F5EE;}
+.pbox-cell.blue{background:#dbeafe;}
+.pval{font-size:19px;font-weight:600;}
+.pval.green{color:#085041;}
+.pval.blue{color:#1e40af;}
+.plbl{font-size:12px;margin-top:2px;}
+.plbl.green{color:#0F6E56;}
+.plbl.blue{color:#1d4ed8;}
+.lw{display:flex;align-items:center;justify-content:center;min-height:60vh;padding:2rem;}
+.lcard{background:#fff;border:1px solid #e5e5e0;border-radius:16px;padding:2rem;width:100%;max-width:320px;}
+.lcard h2{font-size:17px;font-weight:600;color:#1a1a1a;margin-bottom:.5rem;}
+.lcard p{font-size:14px;color:#888;margin-bottom:1.25rem;}
+.lcard input{width:100%;margin-bottom:10px;padding:12px 14px;font-size:15px;border:1px solid #d0d0c8;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;}
+.lcard input:focus{border-color:#1D9E75;}
+.lerr{font-size:13px;color:#dc2626;margin-bottom:8px;display:none;}
+.atbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.atbar h2{font-size:17px;font-weight:600;color:#1a1a1a;}
+.atable-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.atable{width:100%;border-collapse:collapse;font-size:13px;min-width:620px;}
+.atable th{text-align:left;font-weight:600;color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:6px 10px;border-bottom:1px solid #e5e5e0;white-space:nowrap;}
+.atable td{padding:9px 10px;border-bottom:1px solid #f0f0ec;color:#1a1a1a;vertical-align:middle;}
+.atable tr:last-child td{border-bottom:none;}
+.be{padding:4px 11px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid #d0d0c8;background:#fff;color:#555;}
+.bd{padding:4px 11px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid #fca5a5;background:#fff;color:#dc2626;}
+.be:active{background:#f5f5f0;}
+.bd:active{background:#fef2f2;}
+.mbg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;overflow-y:auto;padding:16px;}
+.mbg.on{display:block;}
+.modal{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:520px;margin:0 auto;}
+.modal h3{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:14px;}
+.fr{margin-bottom:12px;}
+.fr label{display:block;font-size:12px;color:#888;margin-bottom:4px;font-weight:500;}
+.fr input,.fr select,.fr textarea{width:100%;padding:10px 12px;font-size:14px;border:1px solid #d0d0c8;border-radius:9px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none;}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:#1D9E75;}
+.fr textarea{resize:vertical;min-height:60px;}
+.fr .fhint{font-size:11px;color:#aaa;margin-top:3px;}
+.macts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pwsec{margin-top:20px;padding-top:16px;border-top:1px solid #e5e5e0;}
+.pwsec h3{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;}
+.pwrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.pwrow input{padding:10px 12px;font-size:14px;border:1px solid #d0d0c8;border-radius:9px;background:#fff;color:#1a1a1a;outline:none;flex:1;min-width:140px;}
+.save-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:10px 22px;border-radius:99px;font-size:14px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:300;}
+.save-toast.show{opacity:1;}
+@media(max-width:480px){
+  .hdr-t{font-size:13px;}
+  .pgrid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+  .pbox.duo{grid-template-columns:1fr;}
+  .fr2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<div class="hdr">
+  <div class="logo"></div>
+  <div>
+    <div class="hdr-t">Equipapharm — Matériel médical</div>
+    <div class="hdr-s" id="bc">Choisissez une pièce</div>
+  </div>
+  <div class="hdr-r">
+    <button class="btn" id="backbtn" style="display:none" onclick="goBack()">← Retour</button>
+    <button class="btn btn-g" id="adminbtn" onclick="openAdmin()">Admin</button>
+    <button class="btn" id="logoutbtn" style="display:none" onclick="doLogout()">Déconnexion</button>
+  </div>
+</div>
+
+<div class="view on" id="v-home">
+  <p class="hint">Touchez une pièce pour découvrir le matériel adapté</p>
+  <div class="plan-wrap">
+    <svg class="plan-svg" viewBox="0 0 560 420" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="540" height="400" rx="10" fill="#f9f9f5" stroke="#ddd" stroke-width="1.5"/>
+      <line x1="10" y1="210" x2="310" y2="210" stroke="#ccc" stroke-width="1.5"/>
+      <line x1="310" y1="10" x2="310" y2="410" stroke="#ccc" stroke-width="1.5"/>
+      <line x1="310" y1="280" x2="550" y2="280" stroke="#ccc" stroke-width="1.5"/>
+      <g class="rz" onclick="showRoom('chambre')">
+        <rect x="16" y="16" width="288" height="188" rx="6"/>
+        <text class="ri" x="160" y="92">🛏️</text>
+        <text class="rl" x="160" y="116">Chambre</text>
+      </g>
+      <g class="rz" onclick="showRoom('sdb')">
+        <rect x="16" y="216" width="288" height="188" rx="6"/>
+        <text class="ri" x="160" y="297">🚿</text>
+        <text class="rl" x="160" y="321">Salle de bain</text>
+      </g>
+      <g class="rz" onclick="showRoom('salon')">
+        <rect x="316" y="16" width="228" height="258" rx="6"/>
+        <text class="ri" x="430" y="130">🛋️</text>
+        <text class="rl" x="430" y="154">Salon / séjour</text>
+      </g>
+      <g class="rz" onclick="showRoom('cuisine')">
+        <rect x="316" y="286" width="228" height="118" rx="6"/>
+        <text class="ri" x="430" y="336">🍳</text>
+        <text class="rl" x="430" y="360">Cuisine</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="view" id="v-room">
+  <div class="rtitle" id="rtitle"></div>
+  <div class="rdesc" id="rdesc"></div>
+  <div class="pgrid" id="pgrid"></div>
+</div>
+
+<div class="view" id="v-detail"></div>
+
+<div class="view" id="v-login">
+  <div class="lw"><div class="lcard">
+    <h2>Espace administrateur</h2>
+    <p>Entrez le mot de passe pour gérer le catalogue</p>
+    <input type="password" id="pwinput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="lerr" id="pwerr">Mot de passe incorrect</div>
+    <button class="btn btn-p" style="width:100%;padding:12px;font-size:15px;" onclick="doLogin()">Accéder</button>
+  </div></div>
+</div>
+
+<div class="view" id="v-admin">
+  <div class="atbar">
+    <h2>Gestion du catalogue</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-p" onclick="openModal(null)">+ Ajouter un produit</button>
+      <button class="btn" onclick="togglePwSec()">Changer le mot de passe</button>
+      <button class="btn" onclick="exportData()" style="border-color:#7c3aed;color:#7c3aed;">⬇ Exporter</button>
+      <label class="btn" style="border-color:#7c3aed;color:#7c3aed;cursor:pointer;">⬆ Importer<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"/></label>
+    </div>
+  </div>
+  <div class="atable-wrap">
+    <table class="atable">
+      <thead><tr><th></th><th>Produit</th><th>Réf.</th><th>Pièce</th><th>Catégorie</th><th>Prix / Reste</th><th>Remb.</th><th></th></tr></thead>
+      <tbody id="atbody"></tbody>
+    </table>
+  </div>
+  <div class="pwsec" id="pwsec" style="display:none;">
+    <h3>Changer le mot de passe</h3>
+    <div class="pwrow">
+      <input type="password" id="npw1" placeholder="Nouveau mot de passe"/>
+      <input type="password" id="npw2" placeholder="Confirmer"/>
+      <button class="btn btn-p" onclick="savePw()">Enregistrer</button>
+    </div>
+    <div id="pwmsg" style="font-size:13px;margin-top:6px;"></div>
+  </div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="mbg" id="mbg">
+  <div class="modal">
+    <h3 id="mtitle">Ajouter un produit</h3>
+    <div class="fr2">
+      <div class="fr"><label>Icône (emoji)</label><input type="text" id="fi" maxlength="4" placeholder="🛏️"/></div>
+      <div class="fr"><label>Référence article</label><input type="text" id="fref" placeholder="Ex : Art. 14052"/></div>
+    </div>
+    <div class="fr"><label>Nom du produit</label><input type="text" id="fn" placeholder="Nom du produit"/></div>
+    <div class="fr2">
+      <div class="fr"><label>Pièce</label>
+        <select id="froom">
+          <option value="chambre">Chambre</option>
+          <option value="sdb">Salle de bain</option>
+          <option value="salon">Salon / séjour</option>
+          <option value="cuisine">Cuisine</option>
+        </select>
+      </div>
+      <div class="fr"><label>Catégorie</label><input type="text" id="ft" placeholder="Mobilité, Sécurité…"/></div>
+    </div>
+    <div class="fr"><label>Description courte</label><textarea id="fd"></textarea></div>
+    <div class="fr" id="price-row">
+      <label>Prix (€)</label>
+      <input type="number" id="fp" min="0" step="0.01" placeholder="Ex : 49.90"/>
+    </div>
+    <div class="fr" id="rac-row" style="display:none;">
+      <label>Reste à charge patient (€)</label>
+      <input type="number" id="frac" min="0" step="0.01" placeholder="Ex : 3.00"/>
+      <div class="fhint">Montant payé par le patient après remboursement SS</div>
+    </div>
+    <div class="fr" style="display:flex;align-items:center;gap:10px;">
+      <input type="checkbox" id="fre" style="width:20px;height:20px;margin:0;cursor:pointer;" onchange="toggleRF()"/>
+      <label for="fre" style="display:inline;font-size:14px;color:#1a1a1a;margin:0;cursor:pointer;">Remboursé Sécurité Sociale</label>
+    </div>
+    <div class="fr"><label>Public concerné (une ligne par profil)</label><textarea id="fpo" style="min-height:70px;"></textarea></div>
+    <div class="fr"><label>Comment l'utiliser</label><textarea id="fu" style="min-height:70px;"></textarea></div>
+    <div class="fr"><label>Critères de choix (une ligne par critère)</label><textarea id="fc" style="min-height:70px;"></textarea></div>
+    <div class="macts">
+      <button class="btn" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-p" onclick="saveProduct()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="save-toast" id="toast">✓ Modifications sauvegardées</div>
+
+<script>
+// ── DONNÉES PAR DÉFAUT ───────────────────────────────────────────────────────
+var DEFAULT_PW = 'pharma2025';
+
+var DEFAULT_CAT = [
+  {id:'p1',room:'chambre',icon:'🛏️',ref:"Art. Plum'care",name:"Lit médicalisé Plum'care",tag:'Lit médicalisé',remb:true,price:null,rac:3.00,
+   desc:"Lit SOTEC avec fonctionnalités adaptables selon la pathologie. Sommier 200×90 cm, hauteur variable 28.5 à 76 cm.",
+   pour:["Personnes âgées en perte d'autonomie","Convalescents post-opératoires","Patients nécessitant des soins infirmiers à domicile","Patients avec maladies chroniques (Parkinson, AVC…)"],
+   util:"Télécommande électrique multi-positions : hauteur du lit, relève-buste, relève-jambes. Panneaux \"Acacia Orme Doré\". Disponible avec ou sans relève-jambe électrique selon la pathologie.",
+   crit:["Relève-jambe électrique ou manuel selon la prescription","Poids max patient : 135 kg","Hauteur min. 28.5 cm — idéal prévention chutes","Accessoire : table à manger au lit (sur demande)"]},
+  {id:'p2',room:'chambre',icon:'🛏️',ref:'Art. XD2 / XD5',name:'Lit médicalisé XD2 / XD5',tag:'Lit médicalisé',remb:true,price:null,rac:3.00,
+   desc:"Lit qui descend très bas (26 cm) pour prévenir les chutes. Relève-buste à translation anti-glissement.",
+   pour:["Patients à risque de chute élevé","Patients désorientés","Personnes avec pathologies nécessitant une position basse"],
+   util:"Le XD2 a un relève-buste électrique à translation. Le XD5 ajoute un relève-jambes manuel sur crémaillères. Dosseret bois Verone Easy à clip.",
+   crit:["Hauteur variable 26 à 76 cm","Poids max patient : 135 kg","XD2 : relève-buste électrique","XD5 : relève-buste électrique + relève-jambes manuel"]},
+  {id:'p3',room:'chambre',icon:'🛏️',ref:'Art. Alzheimer / XL',name:'Lits spécifiques (Alzheimer, XL, Enfant)',tag:'Lit médicalisé',remb:true,price:null,rac:3.00,
+   desc:"Lits adaptés aux cas particuliers : patients désorientés (Alzheimer), forte corpulence (120 cm, 270 kg max), enfants 3-12 ans.",
+   pour:["Patients Alzheimer ou désorientés","Patients en forte corpulence (jusqu'à 270 kg)","Enfants de 3 à 12 ans"],
+   util:"Lit Alzheimer : hauteur électrique 20 à 73 cm. Lit XL 120 : 3 fonctions dont plicature du genou, panneaux acacia.",
+   crit:["Lit Alzheimer : hauteur min. 20 cm","Lit XL : largeur 120 cm, poids max 270 kg","Lit enfant : 3 à 12 ans"]},
+  {id:'p4',room:'chambre',icon:'🟦',name:'Matelas anti-escarres avec compresseur',tag:'Prévention escarres',remb:true,price:null,rac:2.50,
+   desc:"Matelas à air avec compresseur pour prévenir les escarres. Calcul automatique du poids patient, mode soin intégré.",
+   pour:["Patients alités de longue durée","Personnes à mobilité très réduite","Patients en soins palliatifs","Patients après chirurgie"],
+   util:"Le compresseur calcule automatiquement le poids du patient et adapte la pression. Mode soin utile pour les soignants lors des changes.",
+   crit:["Compresseur silencieux branché en continu","Mode soin pour faciliter les changes","Compatible lit médicalisé et standard","Poids du patient calculé automatiquement"]},
+  {id:'p5',room:'chambre',icon:'🔧',name:'Lève-malade électrique + sangles',tag:'Aide au transfert',remb:true,price:null,rac:5.00,
+   desc:"Lève-malade électrique pour les transferts passifs. Utilisé avec une sangle (éco-confort prêtée, autres tailles à l'achat).",
+   pour:["Patients sans capacité de se lever seuls","Aidants souhaitant éviter les lombalgies","Patients en position allongée ou assise"],
+   util:"Sangle glissée sous le patient, accrochée au bras du lève-malade, puis commande électrique. Disponible à la location. Sangle éco-confort taille unique prêtée ; autres tailles à l'achat.",
+   crit:["Sangle U confort : S/M/L/XL, poids max 320 kg","Sangle éco-confort taille unique : lavable à 70°, poids max 320 kg","Têtière rigide amovible disponible (article 9628)","Sangle filet ou croisée entre jambes selon le transfert"]},
+  {id:'p6',room:'chambre',icon:'🔩',name:'Barre de redressement au lit',tag:'Sécurité',remb:true,price:null,rac:null,
+   desc:"Se place sous le matelas pour aider à s'asseoir, se relever et quitter le lit en toute sécurité.",
+   pour:["Personnes âgées avec difficultés à se lever du lit","Patients post-opératoires","Personnes souhaitant plus d'autonomie la nuit"],
+   util:"Glissée sous le matelas. Permet de s'asseoir, se redresser et quitter le lit en gardant l'équilibre.",
+   crit:["Modèle universel (art. 6478) : hauteur 43.5 à 53.5 cm","Modèle pour lit médicalisé (location)","S'adapte à tous les types de lits","Ne nécessite pas de fixation"]},
+  {id:'p7',room:'chambre',icon:'🛡️',name:'Accessoires de lit (arceau, oreiller, alèse)',tag:'Confort & protection',remb:false,price:null,rac:null,
+   desc:"Arceau de lit (art. 9676), oreillers ergonomiques, alèses et draps adaptés aux lits médicalisés.",
+   pour:["Patients alités","Convalescents","Personnes ayant des douleurs aux jambes sous les draps"],
+   util:"Arceau : évite le poids des draps sur les jambes (hauteur 33 cm). Oreiller mémoire de forme ou Reva Bora avec taie imperméable. Alèse Dermofresh : imperméable, anti-acariens, lavable à 90°.",
+   crit:["Arceau article 9676 — hauteur 33 cm","Oreiller ergonomique article 1497","Oreiller Reva Bora art. 7654 (souple) ou 12960 (ferme)","Alèse Dermofresh : taille 90×200 ou 140×200"]},
+  {id:'p8',room:'sdb',icon:'🚿',name:'Siège / chaise de douche',tag:'Confort douche',remb:false,price:39.90,rac:null,
+   desc:"Large choix : tabourets, chaises avec ou sans dossier, chaises mobiles à roulettes. Hauteurs réglables, max jusqu'à 160 kg.",
+   pour:["Personnes âgées ou fatiguées debout","Convalescents","Personnes avec troubles de l'équilibre"],
+   util:"Tabouret simple (art. 14145, 14284) ou rotatif TAHA (art. 9444). Chaises avec dossier : Sorrento (art. 4875), Océane (art. 14006), Pico-commode (art. 1737). Chaises mobiles à roulettes freinées (Mahina, Obana, Cascade).",
+   crit:["Tabouret simple : hauteur 33-53 cm, max 130 kg","Chaise Pico-commode avec ouverture : max 160 kg","Chaises mobiles Mahina/Obana/Cascade : 2 roues arrière freinées","Largeur à vérifier selon la douche ou baignoire"]},
+  {id:'p9',room:'sdb',icon:'🛁',name:'Siège de bain & élévateur ORCA',tag:'Autonomie bain',remb:false,price:49.90,rac:null,
+   desc:"Siège de bain Dakara (art. 13930) ou élévateur de bain ORCA électrique (art. 3158) pour entrer/sortir du bain en sécurité.",
+   pour:["Personnes ne pouvant plus entrer dans la baignoire","Personnes craignant de glisser dans le bain"],
+   util:"Siège Dakara : largeur assise 42 cm, poids max 130 kg. Élévateur ORCA : dossier inclinable 40°, télécommande flottante étanche, fonctionne sur batterie, poids max 140 kg.",
+   crit:["Siège Dakara article 13930 — sans électricité","Élévateur ORCA article 3158 — télécommande étanche","Vérifier la longueur et la largeur de la baignoire","Poids max 130 kg (siège) ou 140 kg (élévateur)"]},
+  {id:'p10',room:'sdb',icon:'📏',name:"Barres d'appui",tag:'Sécurité',remb:false,price:34.90,rac:null,
+   desc:"Barres d'appui murales Prima, Yellow, Days ou FIT easy III pour se lever des WC, entrer dans la douche ou le bain.",
+   pour:["Toute personne âgée à domicile","Patients post-AVC ou post-fracture","Personnes avec troubles de l'équilibre"],
+   util:"Fixées solidement dans la cloison (jamais uniquement dans du plâtre). Barre Yellow avec verrouillage (art. 9278). Barre FIT easy III avec témoin sécurité couleur (art. 9285).",
+   crit:["Barre Prima (plastique) : 30/40/45/60 cm — art. 1104/1241/8495/1105","Barre Days (acier) : 30/46/61/91 cm — art. 7649 à 7652","Barre FIT easy III : 49 cm avec témoin sécurité — art. 9285","Charge min. 100 kg — fixation murale obligatoire"]},
+  {id:'p11',room:'sdb',icon:'🚽',name:'Rehausseur WC & chaise garde-robe',tag:'Autonomie WC',remb:false,price:29.90,rac:null,
+   desc:"Rehausseurs WC (5/10/15 cm), chaises garde-robes Candy et chaise à roulettes passage au-dessus des WC.",
+   pour:["Personnes avec prothèse de hanche (angle interdit)","Patients post-opératoires","Personnes âgées avec faiblesse des membres inférieurs"],
+   util:"Rehausseur art. 9597 (10 cm). Modèle avec couvercle et accoudoirs (6-10-15 cm) art. 2062. Chaise Candy 155 (art. 2345) ou New Ocean (art. 14727). Chaise à roulettes art. 921 : passe au-dessus des WC.",
+   crit:["Hauteur 5/10/15 cm selon morphologie et prescription","Avec accoudoirs (plus d'autonomie) ou sans","Chaise à roulettes art. 921 : passe au-dessus des WC","Compatible avec la plupart des cuvettes standard"]},
+  {id:'p12',room:'sdb',icon:'🧴',name:'Siège mural Sansi Bar',tag:'Sécurité douche',remb:false,price:89.90,rac:null,
+   desc:"Siège mural rabattable Sansi Bar (art. 882). Profondeur pliée 11 cm — ne prend pas de place dans la douche.",
+   pour:["Personnes souhaitant un siège fixe sans encombrement","Douches avec peu d'espace","Aidants qui préfèrent un siège toujours disponible"],
+   util:"Fixé au mur, se rabat contre la paroi quand non utilisé. Assise réglable de 46 à 50 cm. Largeur assise 40 cm, profondeur 46 cm.",
+   crit:["Article 882","Assise réglable 46 à 50 cm","Profondeur pliée : 11 cm seulement","Poids max 130 kg — fixation murale obligatoire"]},
+  {id:'p13',room:'salon',icon:'🛋️',name:'Fauteuil releveur LUX',tag:'Confort',remb:true,price:null,rac:null,
+   desc:"Fauteuil LUX : compact, élégant, hauteur sol/assise 47 cm. Velours 100% polyester. 4 coloris disponibles.",
+   pour:["Personnes âgées avec difficultés à se lever","Patients post-prothèse de hanche ou genou","Patients Parkinson ou arthrosiques"],
+   util:"Télécommande multi-positions. Couettes zippées amovibles et lavables à 30°. Hauteur sol/assise 47 cm facilite le lever sans effort.",
+   crit:["1 moteur (releveur) ou 2 moteurs (releveur + position lit)","Hauteur assise 47 cm","Couettes lavables à 30°","Coloris : ambre, rubis, saphir, galène"]},
+  {id:'p14',room:'salon',icon:'🛋️',name:'Fauteuil releveur COCOON',tag:'Confort',remb:true,price:null,rac:null,
+   desc:"Fauteuil COCOON : fabrication française, accoudoirs amovibles/escamotables, revêtement Normes Feu. Garantie fauteuil 2 ans, moteur 5 ans.",
+   pour:["Usage domicile et collectivité","Patients nécessitant des soins au fauteuil","Personnes en situation de handicap évolutif"],
+   util:"Accoudoirs amovibles/escamotables pour faciliter les transferts. Revêtement PVC/PU imperméable ou velours. Génération 1 & 2. Poids max 160 kg.",
+   crit:["1 ou 2 moteurs","Poids max 160 kg — accoudoirs amovibles","Normes Feu pour collectivités","Largeur assise 48 cm — hauteur assise 45 cm"]},
+  {id:'p15',room:'salon',icon:'🦽',name:'Déambulateur & rollator',tag:'Mobilité',remb:true,price:null,rac:null,
+   desc:"Déambulateurs fixes ou pliables (Brighton, Astéria) et rollators 2, 3 ou 4 roues avec siège et panier.",
+   pour:["Personnes âgées avec instabilité à la marche","Convalescents post-fracture ou post-AVC","Personnes souhaitant un appui stable"],
+   util:"Déambulateur fixe Brighton (art. 14052) : 1.9 kg, max 100 kg. Pliable Astéria (art. 4224) : 2.8 kg, max 135 kg. Rollator 4 roues Modelito (art. 10215) : sacoche + siège, max 136 kg. Fortissimo 2 roues (art. 6292) : max 227 kg.",
+   crit:["Déambulateur fixe Brighton (art. 14052) : max 100 kg","Déambulateur pliable Astéria (art. 4224) : max 135 kg","Rollator 4 roues Road (art. 13929) : tablette + panier, max 120 kg","Rollator Fortissimo 2 roues (art. 6292) : max 227 kg"]},
+  {id:'p16',room:'salon',icon:'🦯',name:'Cannes simples et anglaises',tag:'Mobilité',remb:true,price:null,rac:null,
+   desc:"Large gamme : cannes en T, anatomiques, fantaisie Derby (nombreux motifs), pliantes, tripodes Zoé, et cannes anglaises.",
+   pour:["Toute personne avec appui unilatéral insuffisant","Post-opératoire membre inférieur","Personnes avec douleurs articulaires"],
+   util:"Tenir du côté opposé à la douleur. Coude à 20-30° de flexion. Canne silencieuse en T (art. 14233). Anatomique gauche/droite (art. 11306/11307). Tripode Zoé (art. 2341). Canne Ergodynamic (art. 5716) ultra-légère 510 g.",
+   crit:["Poignée en T silencieuse (art. 14233) : max 113 kg","Poignée anatomique : adapté arthrose de la main, max 120 kg","Canne Fantaisie Derby : nombreux motifs décoratifs","Tripode Zoé (art. 2341) : max 130 kg, droite ou gauche"]},
+  {id:'p17',room:'salon',icon:'💉',name:'Tensiomètres Autotensio / Tensonic',tag:'Suivi médical',remb:false,price:39.90,rac:null,
+   desc:"Gamme Spengler : Autotensio (mesure occasionnelle) et Tensonic (usage régulier), poignet ou bras. 120 mémoires horodatées.",
+   pour:["Patients hypertendus sous traitement","Patients cardiaques en surveillance","Personnes à risque cardiovasculaire"],
+   util:"Mesure au repos, assis, après 5 min. Autotensio bras (art. 8486) : brassard 22-36 cm, brassard XL disponible. Tensonic bras (art. 8485) : écran géant rétroéclairé.",
+   crit:["Autotensio poignet (art. 10416) : usage occasionnel","Autotensio bras (art. 8486) : plus précis, brassard XL disponible","Tensonic bras (art. 8485) : usage régulier, écran géant","Tensonic poignet (art. 8479) : écran rétroéclairé"]},
+  {id:'p18',room:'salon',icon:'🌡️',name:'Thermomètres & oxymètre',tag:'Suivi médical',remb:false,price:24.90,rac:null,
+   desc:"Thermomètre sans contact Infratemp 3, auriculaire Thermoscan 7 (Braun) et oxymètre de pouls Oxypad Home 2.",
+   pour:["Familles et patients à domicile","Patients avec pathologies respiratoires","Personnes âgées fragiles"],
+   util:"Infratemp 3 (art. 13664) : corps, bain, biberon, écran multicolore, garantie 2 ans. Thermoscan 7 (art. 13740) : auriculaire précis, livré avec piles. Oxypad Home 2 (art. 6328) : surveille SpO2 et fréquence cardiaque.",
+   crit:["Infratemp 3 : sans contact, idéal enfants et seniors","Thermoscan 7 : mesure auriculaire de référence","Oxypad Home 2 : surveillance SpO2 et FC, idéal BPCO/asthme","Couvre-sondes Thermoscan disponibles (boites de 40 ou 200)"]},
+  {id:'p19',room:'salon',icon:'💊',name:'Piluliers & semainiers',tag:'Gestion médicaments',remb:false,price:12.90,rac:null,
+   desc:"Semainiers 7 jours et piluliers journaliers, dont un modèle électronique avec alarmes programmables.",
+   pour:["Patients avec traitements complexes","Personnes âgées à risque d'oubli","Aidants gérant les médicaments d'un proche"],
+   util:"Pilbox Tempo (art. 10403) : design, une case par jour. Semainier fantaisie 7 modules × 4 cases (art. 9983). Pilulier électronique (art. 12704) : jusqu'à 6 alarmes. Coupeur-broyeur comprimés (art. 2702) disponible.",
+   crit:["Pilulier journalier Daily (art. 9615) : 4 prises, compatible homéopathie","Semainier fantaisie (art. 9983) : 7 modules amovibles","Pilulier électronique (art. 12704) : 6 alarmes programmables","Coupeur-broyeur (art. 2702) si difficultés à avaler"]},
+  {id:'p20',room:'cuisine',icon:'🍽️',name:'Couverts & vaisselle adaptés',tag:'Autonomie repas',remb:false,price:19.90,rac:null,
+   desc:"Couverts inox à manches antidérapants tordables, assiettes à rebords, gobelets deux anses, rebords clipsables.",
+   pour:["Personnes arthrosiques des mains","Patients post-AVC avec hémiparésie","Personnes avec tremblement ou faiblesse"],
+   util:"Couverts inox tordables (art. 10477-10479). Rebord d'assiette clipsable (art. 10483) : diam. 23-28 cm. Gobelet deux anses (art. 1763) : micro-onde. Gobelet découpe nasale (art. 6391) pour boire sans incliner la tête.",
+   crit:["Cuillère art. 10477 — Fourchette art. 10478 — Petite cuillère art. 10479","Rebord d'assiette art. 10483 (23-28 cm)","Gobelet deux anses art. 1763 (micro-onde)","Gobelet découpe nasale art. 6391"]},
+  {id:'p21',room:'cuisine',icon:'⚖️',name:'Balances médicales Seca',tag:'Suivi médical',remb:false,price:34.90,rac:null,
+   desc:"Pèse-personnes électronique Seca 803 et mécanique Seca 760 pour surveillance du poids à domicile.",
+   pour:["Patients insuffisants cardiaques","Patients diabétiques","Personnes en renutrition ou dénutrition"],
+   util:"Peser le matin à jeun dans les mêmes conditions. +2 kg en 48h chez un insuffisant cardiaque = signal d'alerte. Seca 803 (art. 11128) : électronique. Seca 760 (art. 11042) : mécanique sans pile.",
+   crit:["Seca 803 électronique noire (art. 11128)","Seca 760 mécanique sans pile (art. 11042)","Pèse-bébé disponible à la location ou achat (art. 14675)","Précision médicale certifiée"]},
+  {id:'p22',room:'cuisine',icon:'✋',name:"Aides à l'autonomie (pinces, ouvre-bocaux)",tag:'Autonomie',remb:false,price:14.90,rac:null,
+   desc:"Ouvre-bocal autonome, ouvre-boîte, bavoirs premium et pinces de préhension pour compenser les difficultés motrices.",
+   pour:["Personnes arthrosiques","Patients post-AVC avec hémiparésie","Personnes avec faiblesse des mains"],
+   util:"Ouvre-bocal autonome (art. 4252) : une seule main. Ouvre-boîte (art. 12911). Bavoir premium 70×50 cm lavable à 60° (art. 10482). Pince Nicky 76 cm avec aimant (art. 3593) pour attraper sans se baisser.",
+   crit:["Ouvre-bocal art. 4252 — ouvre-boîte art. 12911","Pince Nicky 76 cm (art. 3593) ou RevoReach 66 cm (art. 8541)","Bavoir premium coton imperméable art. 10482","Chaise haute cuisine (art. 6069) : hauteur 52-67 cm, max 172 kg"]}
+];
+
+// ── STOCKAGE LOCAL ───────────────────────────────────────────────────────────
+var STORAGE_CAT = 'equipapharm_cat';
+var STORAGE_PW  = 'equipapharm_pw';
+
+function loadData() {
+  try {
+    var savedCat = localStorage.getItem(STORAGE_CAT);
+    var savedPw  = localStorage.getItem(STORAGE_PW);
+    cat = savedCat ? JSON.parse(savedCat) : JSON.parse(JSON.stringify(DEFAULT_CAT));
+    pw  = savedPw  ? savedPw : DEFAULT_PW;
+  } catch(e) {
+    cat = JSON.parse(JSON.stringify(DEFAULT_CAT));
+    pw  = DEFAULT_PW;
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_CAT, JSON.stringify(cat));
+    localStorage.setItem(STORAGE_PW, pw);
+    showToast();
+  } catch(e) {
+    alert('Erreur lors de la sauvegarde. Espace de stockage peut-être plein.');
+  }
+}
+
+function showToast() {
+  var t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+// ── EXPORT / IMPORT ──────────────────────────────────────────────────────────
+function exportData() {
+  var data = { cat: cat, pw: pw, exportDate: new Date().toISOString() };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'equipapharm_sauvegarde_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (data.cat && Array.isArray(data.cat)) {
+        cat = data.cat;
+        if (data.pw) pw = data.pw;
+        saveData();
+        renderTable();
+        alert('Importation réussie ! ' + cat.length + ' produits chargés.');
+      } else {
+        alert('Fichier invalide.');
+      }
+    } catch(err) {
+      alert('Erreur lors de la lecture du fichier.');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── ÉTAT ─────────────────────────────────────────────────────────────────────
+var pw  = DEFAULT_PW;
+var cat = [];
+var editId = null, curRoom = null, curView = 'home';
+
+var rm = {
+  chambre: {l:'Chambre',            d:'Lits médicalisés, transfert et accessoires autour du lit'},
+  sdb:     {l:'Salle de bain',      d:"Sièges de douche, barres d'appui et aides à l'hygiène"},
+  salon:   {l:'Salon / séjour',     d:'Fauteuils releveurs, aides à la marche et suivi médical'},
+  cuisine: {l:'Cuisine',            d:"Aides au repas et à l'alimentation adaptée"}
+};
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+function sv(id) {
+  ['v-home','v-room','v-detail','v-login','v-admin'].forEach(function(v){
+    document.getElementById(v).classList.remove('on');
+  });
+  document.getElementById('v-'+id).classList.add('on');
+  curView = id;
+  window.scrollTo(0,0);
+}
+
+function cardBadges(p) {
+  var h = '<span class="tag">'+p.tag+'</span>';
+  if (p.remb) {
+    h += ' <span class="tag tagr">Remb. SS</span>';
+    if (p.rac != null) h += '<div style="margin-top:6px;font-size:13px;color:#1d4ed8;font-weight:500;">Reste : '+p.rac.toFixed(2)+' €</div>';
+  } else if (p.price != null) {
+    h += '<div class="pbadge">'+p.price.toFixed(2)+' €</div>';
+  }
+  return h;
+}
+
+function showRoom(id) {
+  curRoom = id;
+  var m = rm[id];
+  document.getElementById('rtitle').textContent = m.l;
+  document.getElementById('rdesc').textContent  = m.d;
+  document.getElementById('bc').textContent     = m.l;
+  document.getElementById('backbtn').style.display = '';
+  var g = document.getElementById('pgrid');
+  g.innerHTML = '';
+  cat.filter(function(p){ return p.room === id; }).forEach(function(p){
+    var c = document.createElement('div');
+    c.className = 'pc';
+    c.innerHTML = '<div class="pico">'+p.icon+'</div>'
+                + '<div class="pname">'+p.name+'</div>'
+                + '<div class="pref">'+p.ref+'</div>'
+                + cardBadges(p);
+    c.onclick = function(){ showDetail(p); };
+    g.appendChild(c);
+  });
+  sv('room');
+}
+
+function showDetail(p) {
+  document.getElementById('bc').textContent = rm[p.room].l + ' › ' + p.name;
+  var d = document.getElementById('v-detail');
+  var h = '<div class="dh"><div class="dico">'+p.icon+'</div>'
+        + '<div><div class="dname">'+p.name+'</div>'
+        + '<div class="dref">'+p.ref+'</div>'
+        + '<div class="dbadges"><span class="tag">'+p.tag+'</span>'
+        + (p.remb ? '<span class="tag tagr">Remboursé SS</span>' : '')
+        + '</div></div></div>';
+
+  if (p.remb && p.rac != null) {
+    h += '<div class="pbox duo">'
+       + '<div class="pbox-cell green"><div class="pval green">Remboursé SS</div><div class="plbl green">Pris en charge avec ordonnance</div></div>'
+       + '<div class="pbox-cell blue"><div class="pval blue">'+p.rac.toFixed(2)+' €</div><div class="plbl blue">Reste à charge patient</div></div>'
+       + '</div>';
+  } else if (p.remb) {
+    h += '<div class="pbox solo"><div class="pbox-cell green"><div class="pval green">Remboursé SS</div><div class="plbl green">Pris en charge avec ordonnance</div></div></div>';
+  } else if (p.price != null) {
+    h += '<div class="pbox solo"><div class="pbox-cell green"><div class="pval green">'+p.price.toFixed(2)+' €</div><div class="plbl green">Prix indicatif — demandez en pharmacie</div></div></div>';
+  }
+
+  h += '<div class="sec">À qui est-il destiné ?</div>'
+     + '<div class="chips">'+(p.pour||[]).map(function(x){ return '<span class="chip">'+x+'</span>'; }).join('')+'</div>';
+  if (p.util)
+    h += '<div class="sec">Comment l\'utiliser</div><div class="iblk"><p>'+p.util+'</p></div>';
+  if (p.crit && p.crit.length)
+    h += '<div class="sec">Références & critères de choix</div><ul class="flist">'
+       + p.crit.map(function(c){ return '<li>'+c+'</li>'; }).join('') + '</ul>';
+
+  d.innerHTML = h;
+  sv('detail');
+}
+
+function goBack() {
+  if (curView === 'detail') {
+    sv('room');
+    document.getElementById('bc').textContent = rm[curRoom].l;
+  } else {
+    sv('home');
+    document.getElementById('backbtn').style.display = 'none';
+    document.getElementById('bc').textContent = 'Choisissez une pièce';
+  }
+}
+
+// ── ADMIN ────────────────────────────────────────────────────────────────────
+function openAdmin() {
+  if (sessionStorage.getItem('aok') === '1') showAdmin();
+  else {
+    sv('login');
+    document.getElementById('backbtn').style.display = 'none';
+    document.getElementById('bc').textContent = 'Connexion admin';
+  }
+}
+
+function doLogin() {
+  if (document.getElementById('pwinput').value === pw) {
+    sessionStorage.setItem('aok','1');
+    document.getElementById('pwinput').value = '';
+    document.getElementById('pwerr').style.display = 'none';
+    showAdmin();
+  } else {
+    document.getElementById('pwerr').style.display = 'block';
+  }
+}
+
+function showAdmin() {
+  document.getElementById('adminbtn').style.display  = 'none';
+  document.getElementById('logoutbtn').style.display = '';
+  document.getElementById('backbtn').style.display   = 'none';
+  document.getElementById('bc').textContent = 'Administration du catalogue';
+  renderTable();
+  sv('admin');
+}
+
+function doLogout() {
+  sessionStorage.removeItem('aok');
+  document.getElementById('adminbtn').style.display  = '';
+  document.getElementById('logoutbtn').style.display = 'none';
+  sv('home');
+  document.getElementById('bc').textContent = 'Choisissez une pièce';
+}
+
+function renderTable() {
+  var tb = document.getElementById('atbody');
+  tb.innerHTML = '';
+  cat.forEach(function(p){
+    var priceTd = p.remb
+      ? (p.rac != null ? 'Reste : '+p.rac.toFixed(2)+' €' : '—')
+      : (p.price != null ? p.price.toFixed(2)+' €' : '—');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td style="font-size:20px;">'+p.icon+'</td>'
+      + '<td style="font-weight:600;">'+p.name+'</td>'
+      + '<td style="font-size:11px;color:#bbb;">'+p.ref+'</td>'
+      + '<td>'+rm[p.room].l+'</td>'
+      + '<td><span class="tag">'+p.tag+'</span></td>'
+      + '<td>'+priceTd+'</td>'
+      + '<td>'+(p.remb ? '<span class="tag tagr">Oui</span>' : 'Non')+'</td>'
+      + '<td style="display:flex;gap:6px;">'
+      + '<button class="be" onclick="openModal(\''+p.id+'\')">Modifier</button>'
+      + '<button class="bd" onclick="delP(\''+p.id+'\')">Supprimer</button>'
+      + '</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function delP(id) {
+  if (confirm('Supprimer ce produit ?')) {
+    cat = cat.filter(function(p){ return p.id !== id; });
+    saveData();
+    renderTable();
+  }
+}
+
+function toggleRF() {
+  var re = document.getElementById('fre').checked;
+  document.getElementById('price-row').style.display = re ? 'none' : 'block';
+  document.getElementById('rac-row').style.display   = re ? 'block' : 'none';
+}
+
+function openModal(id) {
+  editId = id;
+  document.getElementById('mtitle').textContent = id ? 'Modifier le produit' : 'Ajouter un produit';
+  var p = id ? cat.find(function(x){ return x.id === id; }) : null;
+  document.getElementById('fi').value   = p ? p.icon  : '';
+  document.getElementById('fref').value = p ? p.ref   : '';
+  document.getElementById('fn').value   = p ? p.name  : '';
+  document.getElementById('froom').value= p ? p.room  : 'chambre';
+  document.getElementById('ft').value   = p ? p.tag   : '';
+  document.getElementById('fd').value   = p ? p.desc  : '';
+  document.getElementById('fp').value   = (p && p.price != null) ? p.price  : '';
+  document.getElementById('frac').value = (p && p.rac   != null) ? p.rac    : '';
+  document.getElementById('fre').checked= p ? p.remb  : false;
+  document.getElementById('fpo').value  = p ? (p.pour||[]).join('\n') : '';
+  document.getElementById('fu').value   = p ? p.util || '' : '';
+  document.getElementById('fc').value   = p ? (p.crit||[]).join('\n') : '';
+  toggleRF();
+  document.getElementById('mbg').classList.add('on');
+}
+
+function closeModal() {
+  document.getElementById('mbg').classList.remove('on');
+  editId = null;
+}
+
+function saveProduct() {
+  var n = document.getElementById('fn').value.trim();
+  if (!n) { alert('Le nom du produit est obligatoire.'); return; }
+  var re = document.getElementById('fre').checked;
+  var pv = document.getElementById('fp').value;
+  var rv = document.getElementById('frac').value;
+  var prod = {
+    id:    editId || ('p'+Date.now()),
+    room:  document.getElementById('froom').value,
+    icon:  document.getElementById('fi').value   || '📦',
+    ref:   document.getElementById('fref').value,
+    name:  n,
+    tag:   document.getElementById('ft').value,
+    desc:  document.getElementById('fd').value,
+    price: (!re && pv !== '') ? parseFloat(pv) : null,
+    rac:   ( re && rv !== '') ? parseFloat(rv) : null,
+    remb:  re,
+    pour:  document.getElementById('fpo').value.split('\n').filter(function(x){ return x.trim(); }),
+    util:  document.getElementById('fu').value,
+    crit:  document.getElementById('fc').value.split('\n').filter(function(x){ return x.trim(); })
+  };
+  if (editId) {
+    var i = cat.findIndex(function(p){ return p.id === editId; });
+    cat[i] = prod;
+  } else {
+    cat.push(prod);
+  }
+  saveData();
+  closeModal();
+  renderTable();
+}
+
+function togglePwSec() {
+  var s = document.getElementById('pwsec');
+  s.style.display = s.style.display === 'none' ? 'block' : 'none';
+}
+
+function savePw() {
+  var a = document.getElementById('npw1').value;
+  var b = document.getElementById('npw2').value;
+  var m = document.getElementById('pwmsg');
+  if (!a) { m.style.color='#dc2626'; m.textContent='Veuillez saisir un mot de passe.'; return; }
+  if (a !== b) { m.style.color='#dc2626'; m.textContent='Les deux mots de passe ne correspondent pas.'; return; }
+  pw = a;
+  document.getElementById('npw1').value = '';
+  document.getElementById('npw2').value = '';
+  saveData();
+  m.style.color = '#15803d';
+  m.textContent = 'Mot de passe mis à jour et sauvegardé.';
+}
+
+// ── INITIALISATION ───────────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
